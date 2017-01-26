@@ -61,3 +61,46 @@ function makePanel(movie) {
     return panel;
 }
 
+/*ALL MY SEARCH CODE. At this point, Most of these could be combined with the popular movie functions, 
+but I wrote them separately just in case they need to be different*/
+
+//SEARCH BAR RESULTS
+var prefix = document.getElementById("prefix");
+var thePrefix = prefix.value.toLowerCase();
+var thePrefixPlus = thePrefix.replace(/ /, '+');
+
+//get Search results
+//https://api.themoviedb.org/3/search/movie?api_key=9f7c638352a37a88f16032189ac08772&query=la+la+land
+$.ajax({
+    url: baseUrl + 'search/movie?', 
+    type: 'GET',
+    data: movieApiKey + and + 'query=' + thePrefixPlus, // or $('#myform').serializeArray()
+    success: function (data) {
+        // console.log(data); 
+        //FUNCTION 
+        processSearchMovies(data);
+    }
+});
+
+function processSearchMovies(data) {
+    var movies = data.results;
+    for (i = 0; i < movies.length; i++) {
+        $('#searchResultList').append(makeSearchPanel(movies[i]));
+    }
+}
+
+function makeSearchPanel(movie) {
+    var trimmedString = movie.overview.substring(0, 140);
+    if (trimmedString.length < movie.overview.length) trimmedString += "...";
+    $('#searchResultList').text = '';
+    var panel = '<div class="col-sm-4">' +
+        '<div class="panel panel-success">' +
+        ' <div class="panel-heading">' + movie.title + '</div>' +
+        '<div class="panel-body">' +
+        '<img src="' + imageUrl + movie.poster_path + '" class="img-responsive" style="width:100%" alt="Image"></div>' +
+        '<div class="panel-footer">' + trimmedString + '</div>' +
+        '</div></div>';
+    console.log(baseUrl + "movie?" + movie.poster_path + and + movieApiKey);
+    return panel;
+}
+
